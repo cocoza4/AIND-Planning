@@ -461,7 +461,6 @@ class PlanningGraph():
             if e2 in node_a1.action.precond_pos:
                 return True
 
-        # TODO: why this is required?
         for a1_parent in node_a1.parents:
             for a2_parent in node_a2.parents:
                 if a1_parent.is_mutex(a2_parent):
@@ -531,14 +530,29 @@ class PlanningGraph():
 
         :return: int
         """
-        level_sum = 0
         # TODO implement
         # for each goal in the problem, determine the level cost, then add them together
-
-        # for goal in self.problem.goal:
-        #     level = len(self.s_levels)
-        #     while level >= 0:
-        #         actions = self.a_levels
-
-
+        s_levels = self.s_levels[1:]
+        achieved = set()
+        level_sum = 0
+        for level, nodes in enumerate(s_levels):
+            for node in nodes:
+                if node.symbol not in achieved and self._is_goal_found(node):
+                    achieved.add(node.symbol)
+                    if not self._achieved_via_noop(node):
+                        level_sum += level + 1
+            # print('level {}, achieved {}, sum {}'.format(level+1, achieved, level_sum))
         return level_sum
+
+    def _achieved_via_noop(self, node):
+        parents = list(node.parents)
+        if len(parents) == 1 and parents[0].is_persistent:
+            return True
+        return False
+
+    def _is_goal_found(self, node):
+        for goal in self.problem.goal:
+            if goal == node.symbol and node.is_pos == True:
+                return True
+
+        return False
