@@ -541,7 +541,7 @@ class PlanningGraph():
                     unachieved_goals.remove(node.symbol)
                     if not self._achieved_via_noop(node):
                         level_sum += level + 1
-            # print('level {}, achieved {}, sum {}'.format(level+1, achieved, level_sum))
+            # print('level {}, unachieved_goals {}, sum {}'.format(level+1, unachieved_goals, level_sum))
         return level_sum
 
     def _achieved_via_noop(self, node):
