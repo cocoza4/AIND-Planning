@@ -533,12 +533,12 @@ class PlanningGraph():
         # TODO implement
         # for each goal in the problem, determine the level cost, then add them together
         s_levels = self.s_levels[1:]
-        achieved = set()
+        unachieved_goals = set(self.problem.goal)
         level_sum = 0
         for level, nodes in enumerate(s_levels):
             for node in nodes:
-                if node.symbol not in achieved and self._is_goal_found(node):
-                    achieved.add(node.symbol)
+                if node.symbol in unachieved_goals and node.is_pos == True:
+                    unachieved_goals.remove(node.symbol)
                     if not self._achieved_via_noop(node):
                         level_sum += level + 1
             # print('level {}, achieved {}, sum {}'.format(level+1, achieved, level_sum))
@@ -548,11 +548,4 @@ class PlanningGraph():
         parents = list(node.parents)
         if len(parents) == 1 and parents[0].is_persistent:
             return True
-        return False
-
-    def _is_goal_found(self, node):
-        for goal in self.problem.goal:
-            if goal == node.symbol and node.is_pos == True:
-                return True
-
         return False
